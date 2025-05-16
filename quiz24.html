@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione Concorso Operatore Socio Sanitario - Modulo 27</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            margin: 0;
+            padding: 20px;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+        }
+
+        #timer {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5em;
+            color: #00eaff;
+            text-shadow: 0 0 5px #00eaff;
+        }
+
+        .question-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .question-box {
+            width: 40px;
+            height: 40px;
+            margin: 8px;
+            background: linear-gradient(45deg, #333, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .question-box:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question-box.answered {
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        .question h3 {
+            margin: 0 0 15px 0;
+            color: #ffffff;
+            font-size: 1.6em;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: linear-gradient(90deg, #00eaff, #00b8d4);
+            color: #fff;
+            box-shadow: 0 0 15px #00eaff;
+        }
+
+        .option.wrong {
+            background: linear-gradient(90deg, #ff5252, #d81b60);
+            color: #fff;
+            box-shadow: 0 0 15px #ff5252;
+        }
+
+        .lamp {
+            display: none;
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            transition: transform 0.3s ease;
+        }
+
+        .lamp:hover {
+            transform: scale(1.2);
+        }
+
+        .explanation {
+            margin-top: 15px;
+            font-style: italic;
+            color: #f0f0f0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            animation: slideIn 0.5s ease;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .nav-button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            box-shadow: 0 0 10px #ffd700;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-button:disabled {
+            background: #666;
+            color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        button#submit {
+            display: block;
+            width: 250px;
+            margin: 20px auto;
+            padding: 15px;
+            background: linear-gradient(45deg, #00eaff, #00b8d4);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.3em;
+            box-shadow: 0 0 15px #00eaff;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        button#submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #00eaff;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.8em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Simulazione Concorso Operatore Socio Sanitario - Modulo 27</h1>
+        <div class="question-nav" id="questionNav"></div>
+        <div id="timer">Tempo rimanente: <span id="time">30:00</span></div>
+        <div id="quiz"></div>
+        <div class="navigation">
+            <button class="nav-button" id="prev" disabled>⬅ Indietro</button>
+            <button class="nav-button" id="next">Avanti ➡</button>
+        </div>
+        <button id="submit">Invia Risposte</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Array di domande (781-810) con opzioni riordinate casualmente
+        const questions = [
+            {
+                question: "Cos’è la bronchite cronica?",
+                options: ["Un’infezione virale acuta", "Un’infiammazione cronica delle vie aeree", "Un accumulo di liquido nei polmoni"],
+                correct: "Un’infiammazione cronica delle vie aeree",
+                explanation: "La bronchite cronica è una condizione infiammatoria persistente delle vie aeree, caratterizzata da tosse produttiva con espettorato per almeno tre mesi all’anno per due anni consecutivi. È spesso associata al fumo di sigaretta o all’esposizione a inquinanti e fa parte della broncopneumopatia cronica ostruttiva (BPCO). Non è un’infezione virale acuta (tipica della bronchite acuta) né un accumulo di liquido nei polmoni (edema polmonare). Gli Operatori Socio-Sanitari (OSS) devono monitorare la frequenza e la qualità della tosse, assistere nella gestione dell’ossigenoterapia se prescritta, garantire un ambiente privo di irritanti (es. fumo), e segnalare all’infermiere sintomi come dispnea grave, febbre o cambiamento nell’espettorato."
+            },
+            {
+                question: "Quale è un segno tipico della bronchite cronica?",
+                options: ["Tosse produttiva persistente", "Ittero", "Poliuria"],
+                correct: "Tosse produttiva persistente",
+                explanation: "La tosse produttiva persistente, con espettorato mucoso o mucopurulento, è un segno distintivo della bronchite cronica, presente per almeno tre mesi all’anno per due anni consecutivi. È spesso accompagnata da dispnea e sibili respiratori. L’ittero (colorazione giallastra della pelle) e la poliuria (aumento della produzione di urina) non sono correlati. Gli OSS devono osservare la quantità e il colore dell’espettorato, favorire la posizione semi-seduta per facilitare la respirazione, garantire l’idratazione per fluidificare le secrezioni, e segnalare segni di infezione o peggioramento della dispnea."
+            },
+            {
+                question: "Cos’è l’asma bronchiale?",
+                options: ["Un’infiammazione cronica delle vie aeree con broncocostrizione", "Un’infezione batterica polmonare", "Un collasso del polmone"],
+                correct: "Un’infiammazione cronica delle vie aeree con broncocostrizione",
+                explanation: "L’asma bronchiale è una malattia infiammatoria cronica delle vie aeree caratterizzata da episodi reversibili di broncocostrizione, che causano dispnea, sibili, oppressione toracica e tosse, spesso scatenati da allergeni, esercizio fisico o stress. Non è un’infezione batterica polmonare (polmonite) né un collasso del polmone (pneumotorace). Gli OSS devono monitorare la frequenza respiratoria, assistere nella somministrazione di broncodilatatori inalatori se prescritti, garantire un ambiente privo di allergeni, e segnalare all’infermiere crisi asmatiche acute o segni di distress respiratorio."
+            },
+            {
+                question: "Quale è un segno tipico dell’asma bronchiale?",
+                options: ["Oliguria", "Sibili espiratori", "Ittero"],
+                correct: "Sibili espiratori",
+                explanation: "I sibili espiratori, suoni acuti prodotti dal passaggio dell’aria attraverso vie aeree ristrette, sono un segno tipico dell’asma bronchiale, specialmente durante un attacco. Possono essere accompagnati da dispnea e tosse. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare i pattern respiratori, mantenere il paziente in posizione semi-seduta, garantire l’uso corretto degli inalatori, e segnalare all’infermiere sintomi come cianosi, tachipnea o riduzione dei sibili (che può indicare un’ostruzione grave)."
+            },
+            {
+                question: "Cos’è la polmonite?",
+                options: ["Un’infezione dei polmoni", "Un’infiammazione della pleura", "Un accumulo di liquido nei polmoni"],
+                correct: "Un’infezione dei polmoni",
+                explanation: "La polmonite è un’infezione acuta o cronica degli alveoli polmonari, spesso causata da batteri (es. Streptococcus pneumoniae), virus o funghi, che provoca infiammazione e consolidamento polmonare. I sintomi includono febbre, tosse produttiva, dispnea e dolore toracico. Non è un’infiammazione della pleura (pleurite) né un accumulo di liquido nei polmoni (edema polmonare). Gli OSS devono monitorare la temperatura, la frequenza respiratoria e l’espettorato, garantire l’idratazione, favorire la posizione semi-seduta, e segnalare segni di distress respiratorio o febbre persistente."
+            },
+            {
+                question: "Quale è un segno tipico della polmonite?",
+                options: ["Ittero", "Tosse produttiva con febbre", "Poliuria"],
+                correct: "Tosse produttiva con febbre",
+                explanation: "La tosse produttiva con febbre, spesso accompagnata da dispnea, dolore toracico pleuritico e espettorato purulento, è un segno tipico della polmonite. Può essere associata a tachipnea e crepitii all’auscultazione. L’ittero (colorazione giallastra della pelle) e la poliuria (aumento della produzione di urina) non sono correlati. Gli OSS devono osservare la qualità dell’espettorato, monitorare i parametri vitali, garantire l’assunzione di antibiotici se prescritti, e segnalare all’infermiere sintomi come cianosi o confusione mentale."
+            },
+            {
+                question: "Cos’è l’insufficienza respiratoria?",
+                options: ["Una riduzione dell’ossigenazione o eliminazione di CO2", "Un’infezione polmonare acuta", "Un collasso del polmone"],
+                correct: "Una riduzione dell’ossigenazione o eliminazione di CO2",
+                explanation: "L’insufficienza respiratoria è una condizione in cui i polmoni non riescono a garantire un’adeguata ossigenazione del sangue (ipossiemia) o a eliminare l’anidride carbonica (ipercapnia), portando a dispnea, cianosi e confusione. Può essere acuta (es. da polmonite) o cronica (es. da BPCO). Non è un’infezione polmonare acuta né un collasso del polmone (pneumotorace). Gli OSS devono monitorare la saturazione di ossigeno con il pulsossimetro, assistere nell’ossigenoterapia, mantenere vie aeree libere, e segnalare segni di distress respiratorio o alterazione dello stato mentale."
+            },
+            {
+                question: "Quale è un segno tipico dell’insufficienza respiratoria?",
+                options: ["Cianosi", "Oliguria", "Ittero"],
+                correct: "Cianosi",
+                explanation: "La cianosi, ovvero la colorazione bluastra di pelle, labbra o unghie dovuta a ipossiemia, è un segno tipico dell’insufficienza respiratoria. Può essere accompagnata da dispnea, tachipnea e confusione mentale. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare il colore della pelle, garantire la corretta posizione del paziente (semi-seduta), monitorare la saturazione di ossigeno, e segnalare all’infermiere sintomi come tachicardia o agitazione."
+            },
+            {
+                question: "Cos’è la tubercolosi polmonare?",
+                options: ["Un accumulo di liquido nei polmoni", "Un’infezione batterica da Mycobacterium tuberculosis", "Un’infiammazione della pleura"],
+                correct: "Un’infezione batterica da Mycobacterium tuberculosis",
+                explanation: "La tubercolosi (TBC) polmonare è un’infezione cronica causata dal Mycobacterium tuberculosis, trasmessa per via aerea. Provoca tosse persistente, febbre, sudorazione notturna, perdita di peso e, nei casi avanzati, emottisi. Non è un accumulo di liquido nei polmoni (edema polmonare) né un’infiammazione della pleura (pleurite). Gli OSS devono utilizzare dispositivi di protezione individuale (mascherine FFP2/3), monitorare i sintomi, garantire l’isolamento respiratorio se necessario, e segnalare segni di complicanze come emottisi o febbre alta."
+            },
+            {
+                question: "Quale è un segno tipico della tubercolosi polmonare?",
+                options: ["Tosse persistente con emottisi", "Poliuria", "Ittero"],
+                correct: "Tosse persistente con emottisi",
+                explanation: "La tosse persistente, spesso con espettorato mucopurulento o emottisi (sangue nell’espettorato), è un segno tipico della tubercolosi polmonare, specialmente nelle fasi avanzate. È accompagnata da febbre, sudorazione notturna e astenia. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la qualità della tosse, garantire l’igiene respiratoria, utilizzare DPI, e segnalare all’infermiere sintomi come dispnea grave o emottisi abbondante."
+            },
+            {
+                question: "Cos’è l’embolia polmonare?",
+                options: ["Un’infiammazione dei polmoni", "Un’ostruzione di un’arteria polmonare", "Un collasso del polmone"],
+                correct: "Un’ostruzione di un’arteria polmonare",
+                explanation: "L’embolia polmonare è un’ostruzione acuta di una o più arterie polmonari, solitamente causata da un trombo proveniente dalle vene profonde degli arti inferiori (trombosi venosa profonda). Provoca dispnea improvvisa, dolore toracico, tachicardia e, nei casi gravi, ipossiemia. Non è un’infiammazione dei polmoni (polmonite) né un collasso del polmone (pneumotorace). Gli OSS devono monitorare i parametri vitali, garantire l’ossigenoterapia se prescritta, mantenere il paziente a riposo, e segnalare immediatamente sintomi come cianosi o sincope."
+            },
+            {
+                question: "Quale è un segno tipico dell’embolia polmonare?",
+                options: ["Oliguria", "Dispnea improvvisa", "Ittero"],
+                correct: "Dispnea improvvisa",
+                explanation: "La dispnea improvvisa, spesso accompagnata da dolore toracico pleuritico, tachicardia e ansia, è un segno tipico dell’embolia polmonare. Può essere associata a cianosi o ipotensione nei casi gravi. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la frequenza respiratoria, mantenere il paziente in posizione semi-seduta, monitorare la saturazione di ossigeno, e segnalare all’infermiere sintomi come tachicardia persistente o perdita di coscienza."
+            },
+            {
+                question: "Cos’è la pleurite?",
+                options: ["Un’infezione batterica polmonare", "Un’infiammazione della pleura", "Un accumulo di liquido nei polmoni"],
+                correct: "Un’infiammazione della pleura",
+                explanation: "La pleurite è un’infiammazione della pleura, la membrana che riveste i polmoni e la cavità toracica, spesso causata da infezioni (es. polmonite), traumi o malattie autoimmuni. Provoca dolore toracico pleuritico (acuito dai respiri profondi), tosse secca e, in alcuni casi, versamento pleurico. Non è un’infezione batterica polmonare (polmonite) né un accumulo di liquido nei polmoni (edema polmonare). Gli OSS devono monitorare il dolore e la respirazione, favorire posizioni che riducano il disagio, e segnalare sintomi come febbre o dispnea grave."
+            },
+            {
+                question: "Quale è un segno tipico della pleurite?",
+                options: ["Dolore toracico pleuritico", "Poliuria", "Ittero"],
+                correct: "Dolore toracico pleuritico",
+                explanation: "Il dolore toracico pleuritico, acuto e accentuato dai respiri profondi o dalla tosse, è un segno tipico della pleurite, dovuto all’infiammazione delle superfici pleuriche. Può essere accompagnato da tosse secca o febbre. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la postura del paziente (spesso inclinata per ridurre il dolore), monitorare i parametri vitali, garantire il comfort, e segnalare all’infermiere sintomi come versamento pleurico o dispnea."
+            },
+            {
+                question: "Cos’è la broncopneumopatia cronica ostruttiva (BPCO)?",
+                options: ["Un’infiammazione acuta delle vie aeree", "Una malattia ostruttiva cronica dei polmoni", "Un collasso del polmone"],
+                correct: "Una malattia ostruttiva cronica dei polmoni",
+                explanation: "La broncopneumopatia cronica ostruttiva (BPCO) è una malattia polmonare progressiva caratterizzata da ostruzione irreversibile delle vie aeree, dovuta principalmente al fumo di sigaretta o all’esposizione a inquinanti. Include bronchite cronica ed enfisema, con sintomi come dispnea, tosse cronica e produzione di espettorato. Non è un’infiammazione acuta (bronchite acuta) né un collasso del polmone (pneumotorace). Gli OSS devono monitorare la saturazione di ossigeno, assistere nell’ossigenoterapia, promuovere tecniche di respirazione diaframmatica, e segnalare segni di riacutizzazione come aumento della dispnea o febbre."
+            },
+            {
+                question: "Quale è un segno tipico della BPCO?",
+                options: ["Ittero", "Dispnea da sforzo", "Oliguria"],
+                correct: "Dispnea da sforzo",
+                explanation: "La dispnea da sforzo, che peggiora con l’attività fisica e progredisce nel tempo, è un segno tipico della BPCO, dovuta all’ostruzione delle vie aeree e alla perdita di elasticità polmonare. È spesso accompagnata da tosse cronica e sibili. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la tolleranza allo sforzo, garantire la posizione semi-seduta, monitorare l’uso di broncodilatatori, e segnalare all’infermiere sintomi come cianosi o confusione."
+            },
+            {
+                question: "Cos’è l’enfisema polmonare?",
+                options: ["Un accumulo di liquido nei polmoni", "Una distruzione degli alveoli polmonari", "Un’infezione virale acuta"],
+                correct: "Una distruzione degli alveoli polmonari",
+                explanation: "L’enfisema polmonare è una condizione cronica, parte della BPCO, caratterizzata dalla distruzione irreversibile delle pareti alveolari, che riduce la superficie di scambio gassoso e causa dispnea, torace a botte e ipossiemia. È spesso associato al fumo. Non è un accumulo di liquido nei polmoni (edema polmonare) né un’infezione virale acuta (bronchite virale). Gli OSS devono monitorare la frequenza respiratoria, assistere nell’ossigenoterapia, garantire un ambiente ben ventilato, e segnalare segni di distress respiratorio o infezioni."
+            },
+            {
+                question: "Quale è un segno tipico dell’enfisema polmonare?",
+                options: ["Torace a botte", "Poliuria", "Ittero"],
+                correct: "Torace a botte",
+                explanation: "Il torace a botte, dovuto all’iperinflazione polmonare causata dalla perdita di elasticità degli alveoli, è un segno tipico dell’enfisema polmonare. È accompagnato da dispnea, riduzione dei rumori respiratori e uso dei muscoli accessori. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la conformazione toracica, favorire la posizione semi-seduta, monitorare la saturazione di ossigeno, e segnalare all’infermiere sintomi come tachipnea o cianosi."
+            },
+            {
+                question: "Cos’è la fibrosi polmonare?",
+                options: ["Un’infiammazione della pleura", "Un ispessimento del tessuto polmonare", "Un collasso del polmone"],
+                correct: "Un ispessimento del tessuto polmonare",
+                explanation: "La fibrosi polmonare è una malattia cronica caratterizzata dall’ispessimento e dalla cicatrizzazione del tessuto polmonare, che riduce la capacità di espansione dei polmoni e causa dispnea, tosse secca e ipossiemia. Può essere idiopatica o associata a esposizioni ambientali o malattie autoimmuni. Non è un’infiammazione della pleura (pleurite) né un collasso del polmone (pneumotorace). Gli OSS devono monitorare la saturazione di ossigeno, assistere nell’ossigenoterapia, garantire il comfort respiratorio, e segnalare segni di peggioramento come cianosi o stanchezza estrema."
+            },
+            {
+                question: "Quale è un segno tipico della fibrosi polmonare?",
+                options: ["Oliguria", "Tosse secca persistente", "Ittero"],
+                correct: "Tosse secca persistente",
+                explanation: "La tosse secca persistente, accompagnata da dispnea progressiva e crepitii inspiratori (suono a ‘velcro’), è un segno tipico della fibrosi polmonare, dovuta alla rigidità del tessuto polmonare. Può essere associata a clubbing digitale (ingrossamento delle falangi). L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la frequenza respiratoria, garantire la posizione semi-seduta, monitorare l’ossigenazione, e segnalare all’infermiere sintomi come cianosi o stanchezza marcata."
+            },
+            {
+                question: "Cos’è l’edema polmonare?",
+                options: ["Un’infezione polmonare acuta", "Un accumulo di liquido negli alveoli", "Un collasso del polmone"],
+                correct: "Un accumulo di liquido negli alveoli",
+                explanation: "L’edema polmonare è un accumulo di liquido negli alveoli polmonari, solitamente dovuto a insufficienza cardiaca sinistra, che aumenta la pressione nei capillari polmonari. Provoca dispnea grave, rantoli umidi, tosse con espettorato schiumoso e ansia. Non è un’infezione polmonare acuta (polmonite) né un collasso del polmone (pneumotorace). Gli OSS devono monitorare la frequenza respiratoria, garantire l’ossigenoterapia, mantenere il paziente in posizione seduta, e segnalare immediatamente sintomi come cianosi o ipotensione."
+            },
+            {
+                question: "Quale è un segno tipico dell’edema polmonare?",
+                options: ["Rantoli umidi", "Poliuria", "Ittero"],
+                correct: "Rantoli umidi",
+                explanation: "I rantoli umidi, suoni gorgoglianti udibili all’auscultazione dovuti al liquido negli alveoli, sono un segno tipico dell’edema polmonare. Sono accompagnati da dispnea grave, tosse con espettorato rosa schiumoso e tachicardia. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la qualità della respirazione, mantenere il paziente in posizione seduta, monitorare la saturazione di ossigeno, e segnalare all’infermiere sintomi come confusione o ipotensione."
+            },
+            {
+                question: "Cos’è il pneumotorace?",
+                options: ["Un accumulo di liquido nei polmoni", "Un collasso del polmone", "Un’infezione batterica polmonare"],
+                correct: "Un collasso del polmone",
+                explanation: "Il pneumotorace è la presenza di aria nella cavità pleurica, che causa il collasso parziale o totale del polmone. Può essere spontaneo, traumatico o iatrogeno e provoca dolore toracico improvviso, dispnea e riduzione dei rumori respiratori sul lato colpito. Non è un accumulo di liquido nei polmoni (edema polmonare) né un’infezione batterica (polmonite). Gli OSS devono monitorare la frequenza respiratoria, garantire l’ossigenoterapia, mantenere il paziente a riposo, e segnalare immediatamente sintomi come cianosi o tachicardia."
+            },
+            {
+                question: "Quale è un segno tipico del pneumotorace?",
+                options: ["Dolore toracico improvviso", "Oliguria", "Ittero"],
+                correct: "Dolore toracico improvviso",
+                explanation: "Il dolore toracico improvviso, spesso unilaterale e acuito dai movimenti respiratori, è un segno tipico del pneumotorace, accompagnato da dispnea e riduzione dei rumori respiratori sul lato colpito. Può essere associato a tachicardia o cianosi. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la simmetria toracica, mantenere il paziente in posizione semi-seduta, monitorare i parametri vitali, e segnalare all’infermiere sintomi come ipotensione o distress respiratorio."
+            },
+            {
+                question: "Cos’è l’apnea ostruttiva del sonno?",
+                options: ["Un’infezione delle vie aeree", "Un’interruzione della respirazione durante il sonno", "Un collasso del polmone"],
+                correct: "Un’interruzione della respirazione durante il sonno",
+                explanation: "L’apnea ostruttiva del sonno (OSAS) è una condizione caratterizzata da ripetute interruzioni della respirazione durante il sonno, dovute all’ostruzione delle vie aeree superiori. Provoca russamento, sonnolenza diurna, stanchezza e rischio di complicanze cardiovascolari. Non è un’infezione delle vie aeree né un collasso del polmone (pneumotorace). Gli OSS devono monitorare il sonno del paziente, garantire l’uso della CPAP (ventilazione a pressione positiva continua) se prescritta, promuovere una posizione laterale durante il sonno, e segnalare sintomi come sonnolenza eccessiva o apnee osservate."
+            },
+            {
+                question: "Quale è un segno tipico dell’apnea ostruttiva del sonno?",
+                options: ["Ittero", "Russamento intenso", "Poliuria"],
+                correct: "Russamento intenso",
+                explanation: "Il russamento intenso, spesso interrotto da pause respiratorie (apnee), è un segno tipico dell’apnea ostruttiva del sonno, accompagnato da sonnolenza diurna e stanchezza. Può essere associato a risvegli improvvisi con sensazione di soffocamento. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare i pattern di sonno, garantire l’igiene della CPAP, promuovere la perdita di peso se indicata, e segnalare all’infermiere sintomi come ipertensione o sonnolenza grave."
+            },
+            {
+                question: "Cos’è l’ossigenoterapia?",
+                options: ["Un trattamento con antibiotici", "La somministrazione di ossigeno per migliorare l’ossigenazione", "Un intervento chirurgico polmonare"],
+                correct: "La somministrazione di ossigeno per migliorare l’ossigenazione",
+                explanation: "L’ossigenoterapia è un trattamento medico che prevede la somministrazione di ossigeno tramite maschere o cannule nasali per correggere l’ipossiemia in condizioni come BPCO, polmonite o edema polmonare. Migliora la saturazione di ossigeno e riduce lo sforzo respiratorio. Non è un trattamento con antibiotici né un intervento chirurgico. Gli OSS devono monitorare la saturazione con il pulsossimetro, garantire la corretta posizione del dispositivo di erogazione, mantenere le vie aeree libere, e segnalare segni di intolleranza o malfunzionamento del sistema."
+            },
+            {
+                question: "Quale è un segno che indica la necessità di ossigenoterapia?",
+                options: ["Saturazione di ossigeno < 90%", "Oliguria", "Ittero"],
+                correct: "Saturazione di ossigeno < 90%",
+                explanation: "Una saturazione di ossigeno inferiore al 90%, rilevata tramite pulsossimetria, è un’indicazione comune per l’ossigenoterapia, spesso accompagnata da dispnea, cianosi o tachipnea. È utilizzata in condizioni come insufficienza respiratoria o BPCO. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono controllare regolarmente la saturazione, garantire la pulizia del dispositivo di ossigeno, osservare il comfort del paziente, e segnalare all’infermiere sintomi come cianosi persistente o confusione."
+            },
+            {
+                question: "Cos’è la ventilazione meccanica non invasiva?",
+                options: ["Un trattamento con antibiotici", "Un supporto respiratorio tramite maschera", "Un collasso del polmone"],
+                correct: "Un supporto respiratorio tramite maschera",
+                explanation: "La ventilazione meccanica non invasiva (NIV) è un trattamento che fornisce supporto ventilatorio tramite maschera facciale o nasale, utilizzata in condizioni come insufficienza respiratoria acuta o riacutizzazioni di BPCO, per migliorare l’ossigenazione e ridurre il lavoro respiratorio. Non è un trattamento con antibiotici né un collasso del polmone (pneumotorace). Gli OSS devono monitorare la tolleranza alla maschera, garantire la corretta posizione del dispositivo, mantenere la cute integra, e segnalare segni di discomfort o distress respiratorio."
+            },
+            {
+                question: "Quale è un segno che indica la necessità di ventilazione non invasiva?",
+                options: ["Ittero", "Dispnea con ipossiemia", "Poliuria"],
+                correct: "Dispnea con ipossiemia",
+                explanation: "La dispnea con ipossiemia, spesso accompagnata da tachipnea o ipercapnia, è un’indicazione per la ventilazione non invasiva, utilizzata per evitare l’intubazione in pazienti con insufficienza respiratoria acuta. Può essere associata a condizioni come edema polmonare o BPCO. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la frequenza respiratoria, garantire la corretta applicazione della maschera, monitorare la saturazione di ossigeno, e segnalare all’infermiere sintomi come agitazione o lesioni cutanee."
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        // Carica i quadratini di navigazione
+        function loadQuestionNav() {
+            const navDiv = document.getElementById("questionNav");
+            questions.forEach((_, index) => {
+                const box = document.createElement("div");
+                box.classList.add("question-box");
+                box.textContent = index + 1;
+                box.addEventListener("click", () => {
+                    showQuestion(index);
+                });
+                navDiv.appendChild(box);
+            });
+        }
+
+        // Carica il quiz
+        function loadQuiz() {
+            const quizDiv = document.getElementById("quiz");
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+                questionDiv.id = `question-${index}`;
+                questionDiv.innerHTML = `
+                    <h3>${index + 1}. ${q.question}</h3>
+                    ${q.options.map((opt, i) => `
+                        <div class="option" data-value="${opt}">
+                            <input type="radio" name="q${index}" value="${opt}" id="q${index}_${i}">
+                            <label for="q${index}_${i}">${opt}</label>
+                            <span class="lamp" id="lamp-${index}-${i}">💡</span>
+                        </div>
+                    `).join("")}
+                    <div class="explanation" id="exp-${index}">${q.explanation}</div>
+                `;
+                quizDiv.appendChild(questionDiv);
+
+                // Aggiungi evento per accendere il quadratino
+                const radios = questionDiv.querySelectorAll(`input[name="q${index}"]`);
+                radios.forEach(radio => {
+                    radio.addEventListener("change", () => {
+                        document.querySelectorAll(".question-box")[index].classList.add("answered");
+                    });
+                });
+            });
+            showQuestion(0); // Mostra la prima domanda
+        }
+
+        // Mostra la domanda corrente
+        function showQuestion(index) {
+            document.querySelectorAll(".question").forEach(q => q.classList.remove("active"));
+            document.getElementById(`question-${index}`).classList.add("active");
+            currentQuestion = index;
+
+            // Gestione stato pulsanti
+            document.getElementById("prev").disabled = currentQuestion === 0;
+            document.getElementById("next").disabled = currentQuestion === questions.length - 1;
+        }
+
+        // Timer (30 minuti)
+        let timeLeft = 30 * 60;
+        function startTimer() {
+            const timer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById("time").textContent = 
+                    `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswers();
+                }
+            }, 1000);
+        }
+
+        // Controllo risposte e feedback visivo
+        function checkAnswers() {
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const options = document.querySelectorAll(`#question-${index} .option`);
+
+                options.forEach(option => {
+                    const value = option.getAttribute("data-value");
+                    if (value === q.correct) {
+                        option.classList.add("correct");
+                        const lamp = option.querySelector(".lamp");
+                        lamp.style.display = "inline";
+                        lamp.addEventListener("click", () => {
+                            const explanation = document.getElementById(`exp-${index}`);
+                            explanation.style.display = "block";
+                        });
+                    }
+                });
+
+                if (selected) {
+                    if (selected.value === q.correct) {
+                        score++;
+                    } else {
+                        selected.parentElement.classList.add("wrong");
+                    }
+                }
+            });
+
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = `Punteggio: ${score} / ${questions.length}`;
+            document.getElementById("submit").disabled = true;
+            document.getElementById("prev").disabled = true;
+            document.getElementById("next").disabled = true;
+
+            // Disabilita i radio button dopo l'invio
+            document.querySelectorAll("input[type=radio]").forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+
+        // Inizializzazione
+        window.onload = () => {
+            loadQuestionNav();
+            loadQuiz();
+            startTimer();
+
+            document.getElementById("prev").addEventListener("click", () => {
+                if (currentQuestion > 0) showQuestion(currentQuestion - 1);
+            });
+
+            document.getElementById("next").addEventListener("click", () => {
+                if (currentQuestion < questions.length - 1) showQuestion(currentQuestion + 1);
+            });
+
+            document.getElementById("submit").addEventListener("click", checkAnswers);
+        };
+    </script>
+</body>
+</html>
